@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using VaccinbevisVerifiering.Views;
@@ -27,6 +28,25 @@ namespace VaccinbevisVerifiering
             CertificateManager.LoadValueSets();
             await CertificateManager.LoadVaccineRules();
 
+            await EnsureUpdatedVersion();
+        }
+
+        protected override void OnSleep()
+        {
+        }
+
+        protected override async void OnResume()
+        {
+            CertificateManager.LoadCertificates();
+            CertificateManager.LoadValueSets();
+            await CertificateManager.LoadVaccineRules();
+
+            await EnsureUpdatedVersion();
+        }
+
+
+        private async Task EnsureUpdatedVersion()
+        {
             var deviceVersion = AppInfo.Version;
             var latestVersion = Device.RuntimePlatform switch
             {
@@ -42,17 +62,6 @@ namespace VaccinbevisVerifiering
 
             if (latestMajorVersion > deviceVersion.Major || latestMinorVersion > deviceVersion.Minor)
                 await Current.MainPage.Navigation.PushAsync(new UpdatePage());
-        }
-
-        protected override void OnSleep()
-        {
-        }
-
-        protected override void OnResume()
-        {
-            CertificateManager.LoadCertificates();
-            CertificateManager.LoadValueSets();
-            CertificateManager.LoadVaccineRules();
         }
     }
 }
