@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using VaccinbevisVerifiering.Services.CWT.Certificates;
 using VaccinbevisVerifiering.Services.DGC.ValueSet;
 using VaccinbevisVerifiering.Services.Vaccinregler.ValueSet;
@@ -46,7 +47,7 @@ namespace VaccinbevisVerifiering.Services
             MessagingCenter.Send(Application.Current, "PublicKeysUpdated");
         }
 
-        public async void RefreshVaccineRulesAsync()
+        public async Task RefreshVaccineRulesAsync()
         {
             VaccinRules vaccineRules = await _restService.RefreshVaccinRulesAsync();
             if (vaccineRules != null && vaccineRules.ValidVaccines != null && vaccineRules.ValidVaccines.Count > 0 )
@@ -136,7 +137,7 @@ namespace VaccinbevisVerifiering.Services
             }
         }
 
-        public void LoadVaccineRules()
+        public async Task LoadVaccineRules()
         {
             if (VaccinRules == null && File.Exists(VaccinRulesFileName))
             {
@@ -144,7 +145,7 @@ namespace VaccinbevisVerifiering.Services
             }
             else
             {
-                RefreshVaccineRulesAsync();
+                await RefreshVaccineRulesAsync();
             }
         }
 
